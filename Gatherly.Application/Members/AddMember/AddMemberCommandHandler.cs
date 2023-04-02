@@ -1,5 +1,6 @@
 ﻿using Gatherly.Application.Contracts.Persistence;
 using Gatherly.Application.Exceptions;
+using Gatherly.Domain.Entities;
 using MediatR;
 
 namespace Gatherly.Application.Members.AddMember;
@@ -21,11 +22,20 @@ internal sealed class AddMemberCommandHandler : IRequestHandler<AddMemberCommand
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-        if (validationResult.Errors.Count > 0) 
+        if (validationResult.Errors.Count > 0)
         {
             throw new ValidationException(validationResult);
         }
 
-        throw new NotImplementedException();
+        var member = Member.Create(
+            new MemberId(Guid.NewGuid()),
+            request.EmailAddress,
+            request.FirstName,
+            request.LastName
+        );
+
+        member = await _memberRepository.AddMemberAsync(member);
+
+        return response;
     }
 }

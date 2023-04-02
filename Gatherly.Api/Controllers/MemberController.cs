@@ -16,6 +16,8 @@ namespace Gatherly.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddMember(AddMemberCommand command)
         {
             var member = await _mediator.Send(command);

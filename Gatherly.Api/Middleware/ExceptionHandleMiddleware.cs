@@ -29,7 +29,7 @@ public class ExceptionHandleMiddleware
     {
         HttpStatusCode httpStatusCode = HttpStatusCode.InternalServerError;
 
-        context.Request.ContentType = "application/json";
+        context.Response.ContentType = "application/json";
 
         var result = string.Empty;
 

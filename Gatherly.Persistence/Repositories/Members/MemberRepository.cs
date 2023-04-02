@@ -5,8 +5,17 @@ namespace Gatherly.Persistence.Repositories.Members;
 
 public class MemberRepository : IMemberRepository
 {
-    public Task<Member> AddMemberAsync(Member member)
+    private readonly GatherlyDbContext _context;
+
+    public MemberRepository(GatherlyDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
+    }
+
+    public async Task<Member> AddMemberAsync(Member member)
+    {
+        await _context.Members.AddAsync(member);
+        await _context.SaveChangesAsync();
+        return member;
     }
 }
