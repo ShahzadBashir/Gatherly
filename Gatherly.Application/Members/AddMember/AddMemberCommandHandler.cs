@@ -1,6 +1,7 @@
 ﻿using Gatherly.Application.Contracts.Persistence;
 using Gatherly.Application.Exceptions;
 using Gatherly.Domain.Entities;
+using Mapster;
 using MediatR;
 
 namespace Gatherly.Application.Members.AddMember;
@@ -34,7 +35,9 @@ internal sealed class AddMemberCommandHandler : IRequestHandler<AddMemberCommand
             request.LastName
         );
 
-        member = await _memberRepository.AddMemberAsync(member);
+        //member = await _memberRepository.AddMemberAsync(member);
+
+        response.Member = member.Adapt<MemberDto>();
 
         return response;
     }
