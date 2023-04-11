@@ -30,14 +30,14 @@ internal sealed class AddMemberCommandHandler : IRequestHandler<AddMemberCommand
 
         var member = Member.Create(
             new MemberId(Guid.NewGuid()),
-            request.EmailAddress,
             request.FirstName,
-            request.LastName
+            request.LastName,
+            request.EmailAddress
         );
 
-        //member = await _memberRepository.AddMemberAsync(member);
+        member = await _memberRepository.AddMemberAsync(member);
 
-        response.Member = member.Adapt<MemberDto>();
+        response.Member = member.Adapt<MemberDto>();        
 
         return response;
     }

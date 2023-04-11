@@ -40,16 +40,15 @@ public class ExceptionHandleMiddleware
                 result = JsonSerializer.Serialize(validationException.ValidationErrors);
                 break;
 
-            case BadRequestException badRequestException: 
+            case BadRequestException: 
                 httpStatusCode = HttpStatusCode.BadRequest;
-                result = badRequestException.Message;
                 break;
 
-            case NotFoundException notFoundException: 
+            case NotFoundException: 
                 httpStatusCode = HttpStatusCode.NotFound;
                 break;
 
-            case Exception notFoundException:
+            case Exception:
                 httpStatusCode = HttpStatusCode.BadRequest; 
                 break;
         }

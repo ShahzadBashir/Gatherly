@@ -5,4 +5,5 @@ namespace Gatherly.Application.Contracts.Persistence;
 public interface IMemberRepository
 {
     Task<Member> AddMemberAsync(Member member);
+    Task<Member?> GetMemberByEmailAsync(string emailAddress);
 }

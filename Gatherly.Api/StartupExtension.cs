@@ -1,7 +1,13 @@
 ﻿using Gatherly.Api.Middleware;
+using Gatherly.Api.OptionsSetup;
 using Gatherly.Application;
+using Gatherly.Infrastructure;
+using Gatherly.Infrastructure.Jwt;
 using Gatherly.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace Gatherly.Api;
 
@@ -10,7 +16,29 @@ public static class StartupExtension
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddApplicationService();
+
+        builder.Services.AddInfrastructureService();
+
         builder.Services.AddPersistenceService(builder.Configuration);
+
+        builder.Services.ConfigureOptions<JwtOptionsSetup>();
+        //builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "Gatherly",
+                    ValidAudience = "Gatherly",
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes("ThisIsMySecretKey"))
+                };
+            });
 
         AddSwagger(builder);
 
@@ -41,7 +69,7 @@ public static class StartupExtension
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-        if(app.Environment.IsDevelopment())
+        if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
@@ -52,6 +80,9 @@ public static class StartupExtension
         app.UseCustomExceptionHandler();
 
         app.UseCors("Open");
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllers();
 
